@@ -36,6 +36,49 @@ public class BookBST {
         return root;
     }
 
+    // Função para remover um livro
+    public void remove(String author) {
+        this.root = removeRec(root, author);
+    }
+
+    private TreeNode removeRec(TreeNode root, String author) {
+        if (root == null) {
+            return root;
+        }
+
+        // Percorrer a árvore até encontrar o nó a ser removido
+        if (author.compareToIgnoreCase(root.book.getAuthor()) < 0) {
+            root.left = removeRec(root.left, author);
+        } else if (author.compareToIgnoreCase(root.book.getAuthor()) > 0) {
+            root.right = removeRec(root.right, author);
+        } else {
+            // Caso 1: O nó é uma folha (sem filhos)
+            if (root.left == null && root.right == null) {
+                return null;
+            }
+            // Caso 2: O nó tem apenas um filho
+            else if (root.left == null) {
+                return root.right;
+            } else if (root.right == null) {
+                return root.left;
+            }
+
+            // Caso 3: O nó tem dois filhos
+            // Encontrar o sucessor in-order (menor valor da subárvore da direita)
+            root.book = findMin(root.right).book;
+            root.right = removeRec(root.right, root.book.getAuthor());
+        }
+
+        return root;
+    }
+
+    private TreeNode findMin(TreeNode root) {
+        while (root.left != null) {
+            root = root.left;
+        }
+        return root;
+    }
+
     // Método para buscar livros por autor
     public void searchByAuthor(String author) {
         searchByAuthorRec(root, author);
